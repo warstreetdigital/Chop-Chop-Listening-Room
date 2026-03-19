@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Chop Chop — Branded Audio Identity Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+body{
+    margin:0;
+    font-family:Inter, sans-serif;
+    background:#fef9f6;
+    color:#0b0b0b;
+    min-height:100vh;
+    user-select:none;
+    overflow-x:hidden;
+}
+.overlay-lock{
+    position:fixed; inset:0; pointer-events:none;
+    background:radial-gradient(circle at center, rgba(128,0,0,0.03), rgba(0,0,0,0.15));
+    z-index:2;
+}
+.header{
+    padding:90px 24px 70px;
+    text-align:center;
+    position:relative;
+}
+.header::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(180deg, transparent 60%, rgba(128,0,0,0.15) 85%, rgba(50,0,0,0.3) 100%);
+    z-index:0;
+}
+.header > *{position:relative; z-index:1;}
+.header h1{
+    font-family:'Space Grotesk', sans-serif;
+    font-size:42px;
+    margin:0;
+    letter-spacing:2px;
+    color:#800000; /* Dark Red Brick */
+}
+.header p{
+    margin-top:10px;
+    color:#555;
+    font-size:15px;
+}
+.container{
+    max-width:1200px;
+    margin:0 auto;
+    padding:40px 20px 100px;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:28px;
+}
+.card{
+    background:linear-gradient(180deg,#1a1a1a,#2c2c2c); /* dark card background */
+    border-radius:22px;
+    padding:30px;
+    border:1px solid rgba(255,215,0,0.25); /* gold border accent */
+    box-shadow:0 25px 60px rgba(128,0,0,0.35);
+    position:relative;
+    overflow:hidden;
+    transition:transform .3s;
+}
+.card:hover{transform:translateY(-6px);}
+.card::before{
+    content:"";
+    position:absolute;
+    inset:-20px;
+    background:
+      radial-gradient(circle at bottom center, rgba(128,0,0,0.25), transparent 45%),
+      radial-gradient(circle at top center, rgba(180,0,0,0.12), transparent 50%),
+      radial-gradient(circle at left center, rgba(150,0,0,0.12), transparent 55%),
+      radial-gradient(circle at right center, rgba(150,0,0,0.12), transparent 55%);
+    z-index:0;
+}
+.card > *{position:relative; z-index:1;}
+.card::after{
+    content:"";
+    position:absolute; inset:0;
+    background:linear-gradient(120deg,transparent,rgba(255,215,0,0.02),transparent);
+    opacity:0; transition:.6s;
+}
+.card:hover::after{opacity:1;}
+.mode{
+    font-size:12px;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    color:#FFD700; /* gold accent for modes */
+}
+.title{
+    font-family:'Space Grotesk', sans-serif;
+    font-size:20px;
+    margin:6px 0 8px;
+    color:#FF6347; /* Tomato accent for track title */
+}
+.desc{
+    font-size:13px;
+    color:#ddd;
+    line-height:1.5;
+}
+.controls{
+    margin-top:18px;
+    display:flex;
+    align-items:center;
+    gap:14px;
+}
+.play{
+    width:54px;height:54px;border-radius:50%;
+    border:1px solid rgba(255,215,0,0.5);
+    background:rgba(255,215,0,0.2);
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;font-size:18px;
+}
+.progress-wrap{
+    flex:1;height:6px;background:#333;border-radius:6px;overflow:hidden;
+}
+.progress{
+    height:100%;width:0%;background:linear-gradient(90deg,#FFD700,#FF6347);
+}
+.footer{
+    text-align:center;
+    padding:40px 20px;
+    font-size:11px;
+    color:#bbb;
+    border-top:1px solid rgba(255,215,0,0.2);
+}
+.whatsapp-btn{
+    display:inline-block;
+    padding:14px 20px;
+    border-radius:40px;
+    background:#800000;
+    color:#fff;
+    font-weight:600;
+    text-decoration:none;
+    margin:20px 0;
+    transition:.3s;
+}
+.whatsapp-btn:hover{background:#FF6347;}
+@keyframes ambientPulse{
+  0%{opacity:0.6; filter:blur(0px)}
+  50%{opacity:1; filter:blur(2px)}
+  100%{opacity:0.6; filter:blur(0px)}
+}
+@keyframes heroGlow{
+  0%{box-shadow:0 40px 80px rgba(128,0,0,0.25), 0 20px 40px rgba(0,0,0,0.2)}
+  50%{box-shadow:0 50px 120px rgba(180,0,0,0.45), 0 25px 50px rgba(0,0,0,0.25)}
+  100%{box-shadow:0 40px 80px rgba(128,0,0,0.25), 0 20px 40px rgba(0,0,0,0.2)}
+}
+.card::before{animation:ambientPulse 8s ease-in-out infinite;}
+.hero-base{animation:heroGlow 10s ease-in-out infinite;}
+</style>
+</head>
+<body>
+<div class="overlay-lock"></div>
+
+<div class="header">
+<h1>Chop Chop</h1>
+<p>Branded Audio Identity Demo · Curated Playlist Experience · Proposal Presentation</p>
+<div class="hero-base" style="margin:60px auto 0;max-width:520px;height:80px;border-radius:24px;
+    background:linear-gradient(180deg, rgba(128,0,0,0.02), rgba(0,0,0,0));
+    box-shadow:0 40px 80px rgba(128,0,0,0.45), 0 20px 40px rgba(0,0,0,0.2);">
+</div>
+</div>
+
+<div class="container">
+<!-- 12 Branded Tracks for Chop Chop -->
+<div class="card"><div class="mode">Arrival Mode</div><div class="title">Chop Chop Arrival Pulse</div><div class="desc">Warm, social first impression as guests arrive at Enterprise Road.</div>
+<div class="controls"><div class="play" onclick="toggle('a1',this)">▶</div><div class="progress-wrap"><div class="progress" id="p1"></div></div></div>
+<audio id="a1" src="/cc01.mp3"></audio></div>
+
+<div class="card"><div class="mode">Lobby Mode</div><div class="title">Enterprise Lounge</div><div class="desc">Upbeat, welcoming atmosphere for casual chats & pre-game drinks.</div>
+<div class="controls"><div class="play" onclick="toggle('a2',this)">▶</div><div class="progress-wrap"><div class="progress" id="p2"></div></div></div>
+<audio id="a2" src="/cc02.mp3"></audio></div>
+
+<div class="card"><div class="mode">Morning Mode</div><div class="title">Brunch Vibes Chop Chop</div><div class="desc">Light, cheerful tunes to kickstart brunch and casual dining.</div>
+<div class="controls"><div class="play" onclick="toggle('a3',this)">▶</div><div class="progress-wrap"><div class="progress" id="p3"></div></div></div>
+<audio id="a3" src="/cc03.mp3"></audio></div>
+
+<div class="card"><div class="mode">Daytime Leisure</div><div class="title">Games & Grills</div><div class="desc">Casual energy for putt-putt, games, and social hangouts.</div>
+<div class="controls"><div class="play" onclick="toggle('a4',this)">▶</div><div class="progress-wrap"><div class="progress" id="p4"></div></div></div>
+<audio id="a4" src="/cc04.mp3"></audio></div>
+
+<div class="card"><div class="mode">Corporate Mode</div><div class="title">Family & Friends Lounge</div><div class="desc">Focused background for daytime corporate & small group visits.</div>
+<div class="controls"><div class="play" onclick="toggle('a5',this)">▶</div><div class="progress-wrap"><div class="progress" id="p5"></div></div></div>
+<audio id="a5" src="/cc05.mp3"></audio></div>
+
+<div class="card"><div class="mode">Cocktail Mode</div><div class="title">Sunset Drinks Chop Chop</div><div class="desc">Smooth beats for evening cocktails & social interactions outdoors.</div>
+<div class="controls"><div class="play" onclick="toggle('a6',this)">▶</div><div class="progress-wrap"><div class="progress" id="p6"></div></div></div>
+<audio id="a6" src="/cc06.mp3"></audio></div>
+
+<div class="card"><div class="mode">Dinner Mode</div><div class="title">Evening Feast Chop Chop</div><div class="desc">Warm, comforting ambiance for dining & group meals.</div>
+<div class="controls"><div class="play" onclick="toggle('a7',this)">▶</div><div class="progress-wrap"><div class="progress" id="p7"></div></div></div>
+<audio id="a7" src="/cc07.mp3"></audio></div>
+
+<div class="card"><div class="mode">Sunset Mode</div><div class="title">Golden Hour Social</div><div class="desc">Relaxed evening energy as the sun sets over Enterprise Road.</div>
+<div class="controls"><div class="play" onclick="toggle('a8',this)">▶</div><div class="progress-wrap"><div class="progress" id="p8"></div></div></div>
+<audio id="a8" src="/cc08.mp3"></audio></div>
+
+<div class="card"><div class="mode">Night Mode</div><div class="title">Chop Chop Night Pulse</div><div class="desc">Energetic lounge vibes for nightlife & bar area guests.</div>
+<div class="controls"><div class="play" onclick="toggle('a9',this)">▶</div><div class="progress-wrap"><div class="progress" id="p9"></div></div></div>
+<audio id="a9" src="/cc09.mp3"></audio></div>
+
+<div class="card"><div class="mode">Event Mode</div><div class="title">Party & Play</div><div class="desc">Elevated music for birthday parties, group events, and celebrations.</div>
+<div class="controls"><div class="play" onclick="toggle('a10',this)">▶</div><div class="progress-wrap"><div class="progress" id="p10"></div></div></div>
+<audio id="a10" src="/cc10.mp3"></audio></div>
+
+<div class="card"><div class="mode">Late Night Mode</div><div class="title">Midnight Fun Chop Chop</div><div class="desc">Smooth, stylish beats for late-night social wind-downs.</div>
+<div class="controls"><div class="play" onclick="toggle('a11',this)">▶</div><div class="progress-wrap"><div class="progress" id="p11"></div></div></div>
+<audio id="a11" src="/cc11.mp3"></audio></div>
+
+<div class="card"><div class="mode">Wind-down Mode</div><div class="title">Closure Pulse Chop Chop</div><div class="desc">Reflective, mellow tunes to end the day and leave a lasting memory.</div>
+<div class="controls"><div class="play" onclick="toggle('a12',this)">▶</div><div class="progress-wrap"><div class="progress" id="p12"></div></div></div>
+<audio id="a12" src="/cc12.mp3"></audio></div>
+</div>
+
+<!-- WhatsApp Button -->
+<div style="text-align:center;">
+<a class="whatsapp-btn" href="https://wa.me/263779388560?text=Hello%20WarStreet%20Studios,%20I%20am%20interested%20in%20the%20Chop%20Chop%20branded%20audio%20system." target="_blank">
+Contact WarStreet Studios
+</a>
+</div>
+
+<!-- Persuasion & Business Sections -->
+<div class="container" style="grid-template-columns:1fr;">
+<div class="card">
+<div class="mode">Why This Matters</div>
+<div class="title">Music Shapes Guest Experience</div>
+<div class="desc">
+Guests don’t remember only food—they remember the vibe and energy of Chop Chop. 
+Branded playlists turn social & leisure areas into memorable experiences and encourage return visits.
+</div>
+</div>
+
+<div class="card">
+<div class="mode">Business Impact</div>
+<div class="title">What Branded Audio Does</div>
+<div class="desc">
+• Increases average stay & table turnover<br>
+• Enhances guest mood & social energy<br>
+• Builds emotional brand association<br>
+• Strengthens Chop Chop identity<br>
+• Positions Chop Chop as a premium leisure venue
+</div>
+</div>
+
+<div class="card">
+<div class="mode">Deployment Zones</div>
+<div class="title">Where Playlists Are Applied</div>
+<div class="desc">
+• Arrival & Lobby Areas<br>
+• Brunch & Dining Hours<br>
+• Outdoor Games & Putt-Putt<br>
+• Cocktail & Bar Lounges<br>
+• Private Party & Event Spaces<br>
+• Evening Social Gatherings<br>
+• Late Night Wind-down
+</div>
+</div>
+
+<div class="card">
+<div class="mode">Commercial Model</div>
+<div class="title">Branded Audio Service</div>
+<div class="desc">
+• Monthly playlist curation<br>
+• Seasonal updates & special events<br>
+• Event-based sound design<br>
+• Chop Chop audio brand ownership<br>
+• Exclusive premium guest experience
+</div>
+</div>
+
+<div class="card">
+<div class="mode">Partnership Vision</div>
+<div class="title">From Venue to Sonic Identity</div>
+<div class="desc">
+This demo represents a long-term sound partnership. Chop Chop becomes a venue with a defined sonic brand — not just a place for dining and games.
+</div>
+</div>
+</div>
+
+<div class="footer">
+© 2026 · Chop Chop Branded Audio System · Demo Presentation · All Rights Reserved
+</div>
+
+<script>
+// Lock interactions
+document.addEventListener('contextmenu', e => e.preventDefault());
+document.onkeydown = function(e){
+ if(e.keyCode==123) return false;
+ if(e.ctrlKey && e.shiftKey && ['I','J','C'].includes(e.key.toUpperCase())) return false;
+ if(e.ctrlKey && e.key.toLowerCase()=='u') return false;
+};
+document.body.onselectstart = () => false;
+document.body.ondragstart = () => false;
+
+// Audio Engine
+const audios = ['a1','a2','a3','a4','a5','a6','a7','a8','a9','a10','a11','a12'];
+function toggle(id,btn){
+ audios.forEach(a=>{
+   if(a!==id){
+     const o=document.getElementById(a); o.pause(); o.currentTime=0;
+   }
+ });
+ const audio=document.getElementById(id);
+ if(audio.paused){audio.play(); btn.innerHTML='⏸';}
+ else{audio.pause(); btn.innerHTML='▶';}
+}
+
+setInterval(()=>{
+ audios.forEach((id,i)=>{
+   const a=document.getElementById(id);
+   const p=document.getElementById('p'+(i+1));
+   if(a.duration){p.style.width=(a.currentTime/a.duration*100)+'%';}
+ });
+},200);
+</script>
+</body>
+</html>
