@@ -1,147 +1,392 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chop Chop — Sonic Showroom</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHOP CHOP | SONIC CONTROL ROOM</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <!-- Authoritative Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
 
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
+    <!-- Essential CDNs -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
 
-body{
-    height:100vh;
-    background:linear-gradient(180deg,#0a0a0a,#111);
-    color:#fff;
-    font-family:Inter,sans-serif;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    text-align:center;
-    overflow:hidden;
-}
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'gold': '#d4af37',
+                        'champagne': '#f9e4b7',
+                        'charcoal': '#05070a',
+                        'panel': '#0b0f14',
+                        'neon-cyan': '#00aaff',
+                        'neon-green': '#00ffc3',
+                        'neon-purple': '#7a5cff',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Space Grotesk', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
 
-/* ambient glow */
-body::before{
-    content:"";
-    position:absolute;
-    width:600px;
-    height:600px;
-    background:radial-gradient(circle, rgba(128,0,0,0.3), transparent 60%);
-    filter:blur(80px);
-    top:20%;
-    left:50%;
-    transform:translateX(-50%);
-}
+    <style type="text/css">
+        body, html { margin: 0; padding: 0; width: 100%; scroll-behavior: smooth; overflow-x: hidden; }
+        
+        /* --- VIEW 1: PRICING (SHOWROOM THEME) --- */
+        #pricing-view {
+            background: radial-gradient(circle at 50% 0%, #2d2418 0%, #1a1610 100%);
+            color: #f9e4b7;
+            min-height: 100vh;
+        }
+        .gold-card {
+            background: rgba(45, 36, 24, 0.6);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            backdrop-filter: blur(10px);
+            transition: all 0.4s ease;
+        }
+        .gold-card:hover { border-color: #d4af37; transform: translateY(-5px); }
+        .gold-btn {
+            background: #d4af37; color: #000; font-weight: 800;
+            transition: all 0.3s ease;
+        }
+        .gold-btn:hover { background: #f9e4b7; transform: scale(1.02); }
 
-/* container */
-.container{
-    position:relative;
-    max-width:700px;
-    padding:40px;
-}
+        /* --- VIEW 2: CONTROL ROOM (SYSTEM THEME) --- */
+        #control-room-view { background: #05070a; color: white; min-height: 100vh; }
+        .command-panel { background: #0b0f14; border: 1px solid rgba(255, 255, 255, 0.05); }
+        .glow-purple { box-shadow: 0 0 15px rgba(122, 92, 255, 0.2); }
 
-/* title */
-h1{
-    font-family:'Playfair Display', serif;
-    font-size:48px;
-    letter-spacing:2px;
-    margin-bottom:10px;
-}
-
-/* tag */
-.tag{
-    font-size:13px;
-    letter-spacing:3px;
-    text-transform:uppercase;
-    color:#aaa;
-    margin-bottom:40px;
-}
-
-/* divider */
-.line{
-    width:60px;
-    height:2px;
-    background:linear-gradient(90deg,transparent,#fff,transparent);
-    margin:30px auto;
-    opacity:0.4;
-}
-
-/* main message */
-.message{
-    font-size:20px;
-    font-weight:500;
-    margin-bottom:20px;
-}
-
-/* sub message */
-.sub{
-    font-size:14px;
-    color:#bbb;
-    line-height:1.6;
-}
-
-/* button */
-.btn{
-    display:inline-block;
-    margin-top:30px;
-    padding:14px 28px;
-    border-radius:30px;
-    border:1px solid rgba(255,255,255,0.2);
-    color:#fff;
-    text-decoration:none;
-    font-size:14px;
-    transition:0.3s;
-}
-
-.btn:hover{
-    background:#fff;
-    color:#000;
-}
-
-/* status */
-@keyframes pulse{
-    0%{opacity:0.7}
-    50%{opacity:1}
-    100%{opacity:0.7}
-}
-.status{
-    margin-top:15px;
-    font-size:12px;
-    letter-spacing:2px;
-    color:#777;
-    animation:pulse 2.5s infinite;
-}
-</style>
+        /* --- TRANSITION --- */
+        #transition-overlay {
+            position: fixed; inset: 0; background: #000; z-index: 999;
+            display: none; opacity: 0; transition: opacity 0.6s ease;
+        }
+        .grain {
+            position: fixed; inset: 0; pointer-events: none; z-index: 50; opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3%3Ffilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
 </head>
-
 <body>
+    <div class="grain"></div>
+    <div id="transition-overlay"></div>
 
-<div class="container">
+    <!-- VIEW 1: PRICING SHOWROOM -->
+    <div id="pricing-view" class="relative z-10">
+        <nav class="max-w-7xl mx-auto px-8 py-10 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-gold flex items-center justify-center rounded-sm">
+                    <span class="text-black font-black text-xs">WS</span>
+                </div>
+                <span class="font-display font-bold tracking-[0.3em] text-xs uppercase">WarStreet Sonic</span>
+            </div>
+            <button onclick="toControlRoom()" class="text-[10px] font-bold tracking-[0.3em] uppercase text-gold border-b border-gold/30 pb-1 hover:text-white transition-all">
+                Open Control Room
+            </button>
+        </nav>
 
-    <h1>Chop Chop</h1>
-    <div class="tag">Sonic Showroom</div>
+        <header class="pt-20 pb-16 px-8 text-center max-w-5xl mx-auto">
+            <span class="text-[10px] font-bold tracking-[0.6em] text-gold uppercase mb-6 block">Self-Operating Music System</span>
+            <h1 class="font-display text-5xl md:text-7xl font-bold tracking-tighter mb-8 leading-tight text-white">
+                The Right Music <br> <span class="italic text-gold">All Day Long</span>
+            </h1>
+            <p class="text-champagne/40 text-lg max-w-2xl mx-auto leading-relaxed mb-12">
+                No DJs. No manual searching. Our system automatically plays the perfect music 
+                for your space based on the time of day.
+            </p>
+        </header>
 
-    <div class="line"></div>
+        <main class="max-w-6xl mx-auto px-8 pb-32 grid grid-cols-1 lg:grid-cols-2 gap-10">
+            <!-- Sonic Identity Pack -->
+            <div class="gold-card p-10 rounded-sm flex flex-col">
+                <div class="mb-8">
+                    <span class="text-[9px] font-bold tracking-[0.4em] text-gold uppercase mb-3 block">Step 1: The Music</span>
+                    <h2 class="font-display text-3xl font-bold mb-4 text-white">Sonic Identity Pack</h2>
+                    <p class="text-champagne/50 text-sm leading-relaxed">
+                        A complete set of 4 curated playlists built specifically for your business. 
+                        Each playlist is designed for a specific time window.
+                    </p>
+                </div>
+                <ul class="space-y-4 mb-12 flex-grow text-sm text-champagne/80">
+                    <li class="flex items-center gap-3"><div class="w-1 h-1 bg-gold rotate-45"></div> Morning Flow (06:00–10:00)</li>
+                    <li class="flex items-center gap-3"><div class="w-1 h-1 bg-gold rotate-45"></div> Day Boost (10:00–14:00)</li>
+                    <li class="flex items-center gap-3"><div class="w-1 h-1 bg-gold rotate-45"></div> Afternoon Balance (14:00–18:00)</li>
+                    <li class="flex items-center gap-3"><div class="w-1 h-1 bg-gold rotate-45"></div> Night Atmosphere (18:00–06:00)</li>
+                </ul>
+                <div class="pt-8 border-t border-white/5">
+                    <div class="text-4xl font-bold mb-1 text-white">$150</div>
+                    <div class="text-[10px] text-gold/60 uppercase tracking-widest">One-Time Setup</div>
+                </div>
+            </div>
 
-    <div class="message">
-        Preview Window Closed
+            <!-- Sonic Control Room -->
+            <div class="gold-card p-10 rounded-sm flex flex-col border-gold/40">
+                <div class="mb-8">
+                    <span class="text-[9px] font-bold tracking-[0.4em] text-gold uppercase mb-3 block">Step 2: The Control</span>
+                    <h2 class="font-display text-3xl font-bold mb-4 text-white">Sonic Control Room</h2>
+                    <p class="text-champagne/50 text-sm leading-relaxed">
+                        Your private dashboard to manage the music. It runs itself, 
+                        but gives you manual control whenever you need it.
+                    </p>
+                </div>
+                <div class="space-y-6 mb-12 flex-grow">
+                    <div>
+                        <h4 class="text-[10px] font-bold text-gold uppercase tracking-widest mb-2">Automatic Mode</h4>
+                        <p class="text-xs text-champagne/40 leading-relaxed">The system switches music automatically based on the time of day.</p>
+                    </div>
+                    <div>
+                        <h4 class="text-[10px] font-bold text-gold uppercase tracking-widest mb-2">Sonic Drops</h4>
+                        <p class="text-xs text-champagne/40 leading-relaxed">Play short messages like welcome greetings, branded jingles, or announcements instantly.</p>
+                    </div>
+                </div>
+                <div class="pt-8 border-t border-white/5">
+                    <div class="text-4xl font-bold mb-1 text-white">$40 <span class="text-lg opacity-40 font-normal">+ $50/mo</span></div>
+                    <div class="text-[10px] text-gold/60 uppercase tracking-widest mb-6">Setup Fee + Monthly Subscription</div>
+                    <button onclick="toControlRoom()" class="gold-btn w-full py-4 rounded-sm text-xs">
+                        View Control Room Interface
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <footer class="py-12 text-center border-t border-white/5 opacity-30 text-[10px] tracking-[0.5em] uppercase">
+            © 2026 WarStreet Sonic System | Powered by Experience Model
+        </footer>
     </div>
 
-    <div class="sub">
-        The Chop Chop sonic experience was available for a limited preview.<br><br>
-        The system is now being refined, structured, and aligned for full deployment.<br><br>
-        This is not a playlist — this is a branded sound environment.
+    <!-- VIEW 2: CONTROL ROOM -->
+    <div id="control-room-view" style="display: none;" class="relative">
+        <div id="root"></div>
     </div>
 
-    <div class="status">SHOWROOM OFFLINE</div>
+    <!-- REACT CONTROL ROOM LOGIC -->
+    <script type="text/babel">
+        const { useState, useEffect, useMemo, useRef } = React;
+        const { motion, AnimatePresence } = window.Motion || {};
 
-    <a href="https://wa.me/263779388560" class="btn">
-        Contact WarStreet
-    </a>
+        const Icon = ({ name, size = 16, className = "" }) => {
+            const iconRef = useRef(null);
+            useEffect(() => { if (window.lucide) lucide.createIcons(); }, [name]);
+            return <i ref={iconRef} data-lucide={name} style={{ width: size, height: size }} className={className}></i>;
+        };
 
-</div>
+        const PLAYLISTS = [
+            { id: 'p1', name: 'Morning Flow', start: 6, end: 10, time: '06:00 – 10:00' },
+            { id: 'p2', name: 'Day Boost', start: 10, end: 14, time: '10:00 – 14:00' },
+            { id: 'p3', name: 'Afternoon Balance', start: 14, end: 18, time: '14:00 – 18:00' },
+            { id: 'p4', name: 'Night Atmosphere', start: 18, end: 6, time: '18:00 – 06:00' }
+        ];
 
+        const SONIC_DROPS = [
+            { id: 'd1', title: 'WELCOME', icon: 'user-plus' },
+            { id: 'd2', title: 'JINGLE', icon: 'music' },
+            { id: 'd3', title: 'PROMO', icon: 'megaphone' },
+            { id: 'd4', title: 'ALERT', icon: 'bell' }
+        ];
+
+        function App() {
+            const [mode, setMode] = useState('AUTO');
+            const [time, setTime] = useState(new Date());
+            const [manualId, setManualId] = useState(null);
+
+            useEffect(() => {
+                const timer = setInterval(() => setTime(new Date()), 1000);
+                return () => clearInterval(timer);
+            }, []);
+
+            const systemState = useMemo(() => {
+                const hour = time.getHours();
+                const autoActive = PLAYLISTS.find(p => p.start < p.end ? (hour >= p.start && hour < p.end) : (hour >= p.start || hour < p.end));
+                const activeId = mode === 'AUTO' ? autoActive.id : (manualId || autoActive.id);
+                return { active: PLAYLISTS.find(p => p.id === activeId) };
+            }, [time, mode, manualId]);
+
+            return (
+                <div className="flex flex-col min-h-screen">
+                    {/* Fixed Top Navigation Bar */}
+                    <nav className="fixed top-0 left-0 w-full bg-panel/80 backdrop-blur-md border-b border-white/5 z-[200] px-8 py-4 flex justify-between items-center">
+                        <div className="flex items-center gap-3">
+                            <div className="w-6 h-6 bg-neon-cyan flex items-center justify-center rounded-sm">
+                                <span className="text-black font-black text-[10px]">CC</span>
+                            </div>
+                            <span className="text-[10px] font-bold tracking-[0.4em] uppercase text-white/60">Chop Chop System</span>
+                        </div>
+                        <button 
+                            onClick={() => window.toPricing()} 
+                            className="flex items-center gap-2 text-[10px] font-bold tracking-widest uppercase text-white/40 hover:text-neon-cyan transition-all"
+                        >
+                            <Icon name="arrow-left" size={12} />
+                            Exit Console
+                        </button>
+                    </nav>
+
+                    <div className="pt-24 p-8 lg:p-16 flex flex-col gap-12 max-w-7xl mx-auto w-full">
+                        {/* Header Hierarchy */}
+                        <header className="flex flex-col gap-2">
+                            <div className="text-[10px] font-bold tracking-[0.5em] text-neon-cyan uppercase opacity-50">Chop Chop Sonic Control Room</div>
+                            <div className="flex flex-col">
+                                <span className="text-[11px] font-mono text-white/30 uppercase tracking-widest">Chop Chop System</span>
+                                <h1 className="text-4xl lg:text-6xl font-black tracking-tighter uppercase leading-none text-white">Sonic Control Room</h1>
+                            </div>
+                            <div className="flex items-center gap-3 mt-4">
+                                <div className="w-2 h-2 rounded-full bg-neon-green animate-pulse shadow-[0_0_8px_#00ffc3]"></div>
+                                <span className="text-[9px] font-bold tracking-[0.4em] uppercase text-neon-green">
+                                    System Operational • {mode === 'AUTO' ? 'Automatic Mode Active' : 'Manual Override Enabled'}
+                                </span>
+                            </div>
+                        </header>
+
+                        <main className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+                            {/* Control Section */}
+                            <div className="lg:col-span-4 flex flex-col gap-6">
+                                <div className={`command-panel p-6 rounded-sm transition-all ${mode === 'MANUAL' ? 'border-neon-purple glow-purple' : ''}`}>
+                                    <div className="text-[10px] font-bold tracking-widest text-white/40 uppercase mb-4">Control Mode</div>
+                                    <div className="flex gap-2">
+                                        <button 
+                                            onClick={() => {setMode('AUTO'); setManualId(null);}} 
+                                            className={`flex-1 py-3 text-[10px] font-bold tracking-widest rounded-sm transition-all ${mode === 'AUTO' ? 'bg-neon-cyan text-black' : 'bg-white/5 text-white/40'}`}
+                                        >
+                                            AUTOMATIC
+                                        </button>
+                                        <button 
+                                            onClick={() => setMode('MANUAL')} 
+                                            className={`flex-1 py-3 text-[10px] font-bold tracking-widest rounded-sm transition-all ${mode === 'MANUAL' ? 'bg-neon-purple text-white' : 'bg-white/5 text-white/40'}`}
+                                        >
+                                            MANUAL
+                                        </button>
+                                    </div>
+                                    <div className="mt-4 text-[10px] text-white/60 font-mono tracking-tight">
+                                        {mode === 'AUTO' 
+                                            ? "PROTOCOL: SYSTEM_SCHEDULING_PLAYBACK" 
+                                            : "PROTOCOL: MANUAL_OVERRIDE_ENABLED"}
+                                    </div>
+                                </div>
+
+                                <div className="command-panel p-6 rounded-sm flex flex-col items-center justify-center text-center">
+                                    <div className="text-[9px] font-bold tracking-widest text-white/20 uppercase mb-2">System Clock Sync</div>
+                                    <div className="text-4xl font-mono text-neon-cyan tracking-tighter">
+                                        {time.toLocaleTimeString('en-US', { hour12: false })}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Active Display */}
+                            <div className="lg:col-span-8">
+                                <div className="command-panel p-10 rounded-sm min-h-[350px] flex flex-col justify-center relative overflow-hidden">
+                                    <div className="absolute top-0 right-0 w-64 h-64 bg-neon-green/5 blur-[80px] -mr-32 -mt-32"></div>
+                                    <div className="relative z-10">
+                                        <div className="text-[10px] font-bold text-white/30 uppercase mb-2 tracking-widest">Active Playback</div>
+                                        <h2 className="text-5xl lg:text-7xl font-black tracking-tighter uppercase leading-none text-white">
+                                            {systemState.active.name}
+                                        </h2>
+                                        <div className="mt-12 flex gap-10">
+                                            <div>
+                                                <div className="text-[9px] text-white/20 uppercase tracking-widest">Scheduled Window</div>
+                                                <div className="text-sm font-bold mt-1 text-neon-cyan">{systemState.active.time}</div>
+                                            </div>
+                                            <div>
+                                                <div className="text-[9px] text-white/20 uppercase tracking-widest">Playback Protocol</div>
+                                                <div className="text-sm font-bold mt-1 uppercase tracking-tighter">
+                                                    {mode === 'AUTO' ? 'Time-Based Rotation' : 'Manual Selection'}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Playlist Rail */}
+                            <div className="lg:col-span-12 flex flex-col gap-4 mt-4">
+                                <div className="text-[10px] font-bold tracking-widest text-white/20 uppercase">System Rotation Schedule</div>
+                                <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar">
+                                    {PLAYLISTS.map(p => (
+                                        <div key={p.id} onClick={() => {setManualId(p.id); setMode('MANUAL');}} className={`flex-shrink-0 w-72 p-8 rounded-sm border cursor-pointer transition-all ${p.id === systemState.active.id ? 'border-neon-green bg-neon-green/5 scale-105 z-20' : 'border-white/5 opacity-40 hover:opacity-100'}`}>
+                                            <div className="text-[9px] font-bold uppercase mb-4 tracking-widest text-neon-cyan">{p.time}</div>
+                                            <div className="text-2xl font-black uppercase tracking-tight text-white">{p.name}</div>
+                                            <div className="text-[9px] text-white/40 mt-2 tracking-widest uppercase font-mono">
+                                                {p.id === systemState.active.id ? 'ACTIVE_NOW' : 'SCHEDULED'}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Sonic Drops */}
+                            <section className="lg:col-span-12 mt-10">
+                                <div className="mb-8">
+                                    <h3 className="text-[11px] font-bold tracking-[0.4em] uppercase text-white/20 mb-2">Sonic Drops</h3>
+                                    <p className="text-[11px] text-white/40 max-w-2xl leading-relaxed">
+                                        Sonic Drops lets you trigger short audio elements during operation, including greetings, jingles, announcements, promos, and alerts.
+                                    </p>
+                                </div>
+                                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                                    {SONIC_DROPS.map(drop => (
+                                        <button key={drop.id} className="command-panel p-6 flex flex-col items-center gap-4 hover:border-neon-purple transition-all group">
+                                            <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-neon-purple group-hover:text-black transition-all">
+                                                <Icon name={drop.icon} />
+                                            </div>
+                                            <span className="text-[10px] font-black tracking-widest uppercase text-white">{drop.title}</span>
+                                        </button>
+                                    ))}
+                                </div>
+                            </section>
+                        </main>
+
+                        <footer className="mt-auto py-12 border-t border-white/5 flex justify-between items-center opacity-30">
+                            <div className="text-[9px] font-bold tracking-[0.5em] uppercase">© 2026 Chop Chop Sonic System</div>
+                            <div className="text-[9px] font-mono uppercase tracking-widest">System_v4.0_Stable</div>
+                        </footer>
+                    </div>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+
+    <!-- VIEW SWITCHING LOGIC -->
+    <script>
+        const pricing = document.getElementById('pricing-view');
+        const control = document.getElementById('control-room-view');
+        const overlay = document.getElementById('transition-overlay');
+
+        window.toControlRoom = function() {
+            overlay.style.display = 'block';
+            setTimeout(() => overlay.style.opacity = '1', 10);
+            setTimeout(() => {
+                pricing.style.display = 'none';
+                control.style.display = 'block';
+                window.scrollTo(0,0);
+                setTimeout(() => overlay.style.opacity = '0', 100);
+                setTimeout(() => overlay.style.display = 'none', 700);
+            }, 600);
+        }
+
+        window.toPricing = function() {
+            overlay.style.display = 'block';
+            setTimeout(() => overlay.style.opacity = '1', 10);
+            setTimeout(() => {
+                control.style.display = 'none';
+                pricing.style.display = 'block';
+                window.scrollTo(0,0);
+                setTimeout(() => overlay.style.opacity = '0', 100);
+                setTimeout(() => overlay.style.display = 'none', 700);
+            }, 600);
+        }
+    </script>
 </body>
 </html>
